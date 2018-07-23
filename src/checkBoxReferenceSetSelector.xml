@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="com.mendix.widget.custom.checkboxreferencesetselector.CheckBoxReferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>checkBoxReferenceSetSelector</name>
+    <description>Our checkBoxReferenceSetSelector widget</description>
+    <icon/>
+    <properties>
+        <property key="" type="string">
+            <caption>checkBoxReferenceSetSelector</caption>
+            <category>behaviour</category>
+            <description/>
+        </property>
+    </properties>
+
+</widget>
