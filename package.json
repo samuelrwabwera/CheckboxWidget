@@ -2,7 +2,7 @@
   "name": "checkboxreferencesetselector",
   "widgetName": "CheckBoxReferenceSetSelector",
   "version": "0.0.1",
-  "description": "Change a color using a color input",
+  "description": "Select Checkbox Reference Set Selector",
   "copyright": "Mendix BV",
   "scripts": {
     "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec \"grunt",
@@ -18,11 +18,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mendixlabs/color-picker"
+    "url": "https://github.com/samuelrwabwera/CheckboxWidget.git"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/mendixlabs/color-picker/issues"
+    "url": "https://github.com/samuelrwabwera/CheckboxWidget.git"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.5",
