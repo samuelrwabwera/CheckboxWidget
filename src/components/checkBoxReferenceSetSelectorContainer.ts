@@ -1,4 +1,4 @@
-import { CSSProperties, Component, createElement } from "react";
+import { Component, createElement } from "react";
 
 import "../ui/checkBoxReferenceSetSelector.scss";
 
@@ -41,11 +41,8 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
-            createElement("input", { type: "color", className: "color-picker", onChange: this.handleChange.bind(this) }),
-            createElement("textarea", {
-                className: "content-area",
-                style: { backgroundColor: this.state.backgroundColor } as CSSProperties
-            })
+            createElement("label"),
+            createElement("input", { type: "checkbox", className: "check-box", onChange: this.handleChange.bind(this) })
         );
     }
 
