@@ -15,7 +15,7 @@ export interface ContainerProps extends WrapperProps {
     checkBox: string;
 }
 
-export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps> {
+export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps > {
 
     readonly state = {
     };
