@@ -15,14 +15,9 @@ export interface ContainerProps extends WrapperProps {
     checkBox: string;
 }
 
-export interface ContainerState {
-    backgroundColor?: string;
-}
-
-export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState > {
+export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps> {
 
     readonly state = {
-        backgroundColor: undefined
     };
 
     constructor(props: ContainerProps) {
@@ -32,22 +27,13 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     }
 
     render() {
-        // <div class="my-custom-helloworld-widget">
-        //     <input type="color" class="color-picker"> // select a color
-        //     <Input type="text-area" class="content-area"> // apply selected color here
-        // </div>
-
         return createElement("div",
             {
                 className: "checkBoxReferenceSetSelector"
             },
             createElement("label"),
-            createElement("input", { type: "checkbox", className: "check-box", onChange: this.handleChange.bind(this) })
+            createElement("input", { type: "checkbox", className: "check-box" })
         );
-    }
-
-    private handleChange(event: Event) {
-        this.setState({ backgroundColor: (event.target as HTMLInputElement).value });
     }
 
     public static parseStyle(style = ""): {[key: string]: string} {

@@ -5,7 +5,7 @@
             <widgetFile path="checkBoxReferenceSetSelector.xml"/>
         </widgetFiles>
         <files>
-            <file path="com/mendix/widget/custom/checkBoxReferenceSetSelector"/>
+            <file path="com/mendix/widget/custom/checkboxreferencesetselector"/>
         </files>
     </clientModule>
 </package>
