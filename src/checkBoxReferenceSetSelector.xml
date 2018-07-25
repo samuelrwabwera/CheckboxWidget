@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="com.mendix.widget.custom.checkboxreferenceSetsetselector.CheckBoxreferenceSetSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
-    <name>Checkbox referenceSet Set Selector</name>
-    <description>Our checkBoxreferenceSetSetSelector widget</description>
+<widget id="com.mendix.widget.custom.checkboxreferencesetselector/CheckBoxreferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Checkbox referenceSet Selector</name>
+    <description>Our checkBoxreferenceSetSelector widget</description>
     <icon/>
     <properties>
         <property key="captionName" type="string">
-            <caption>checkBoxreferenceSetSetSelector</caption>
+            <caption>checkBoxreferenceSetSelector</caption>
             <category>behaviour</category>
             <description/>
         </property>
