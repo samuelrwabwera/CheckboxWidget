@@ -1,29 +1,45 @@
 import { Component, createElement } from "react";
-
-import "../ui/checkBoxReferenceSetSelector.scss";
+import "../ui/checkBoxReferenceSetSelector.css";
 
 interface WrapperProps {
     class: string;
-    mxObject?: mendix.lib.MxObject;
+    mxObject: mendix.lib.MxObject;
     mxform: mxui.lib.form._FormBase;
     style: string;
     readOnly: boolean;
-    friendlyId: string;
+
 }
 
 export interface ContainerProps extends WrapperProps {
-    checkBox: string;
+    checkBoxType: string;
+    dataSource: "xpath" | "microflow";
+    entity: string;
+    displayAttr: string;
+    fieldCaption: string;
+    constraint: string;
+    showLabel: string;
 }
 
-export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps > {
-
-    readonly state = {
+interface ContainerState {
+    checkboxItems: {
+        caption: string | number | boolean;
+        isChecked: boolean;
+    }[];
+}
+export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
+    readonly state: ContainerState = {
+        checkboxItems: []
     };
+    private entity: string;
+    private reference: string;
 
     constructor(props: ContainerProps) {
         super(props);
 
         // this.handleChange = this.handleChange.bind(this);
+        this.entity = this.props.entity.split("/")[1];
+        this.reference = this.props.entity.split("/")[0];
+        this.getDataFromXPath = this.getDataFromXPath.bind(this);
     }
 
     render() {
@@ -31,9 +47,59 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
-            createElement("label"),
-            createElement("input", { type: "checkbox", className: "check-box" })
+            createElement("label", {}),
+
+            this.state.checkboxItems.map(_item => createElement("input", { type: "checkbox", className: "checkbox", key: "" }))
         );
+    }
+
+    componentWillReceiveProps(props: ContainerProps) {
+        if (props.mxObject) {
+            this.getDataFromXPath(props.mxObject);
+        }
+    }
+
+    private getDataFromXPath(mxObject: mendix.lib.MxObject) {
+        const constraint = this.props.constraint
+            ? this.props.constraint.replace(/\[\%CurrentObject\%\]/gi, mxObject.getGuid())
+            : "";
+        const XPath = "//" + this.entity + constraint;
+        mx.data.get({
+            xpath: XPath,
+            filter: {
+                sort: [ [ this.props.displayAttr, "asc" ] ],
+                offset: 0,
+                amount: 50
+            },
+            callback: objects => {
+                this.processItems(objects);
+                // tslint:disable-next-line:no-console
+                console.log(objects);
+            }
+        });
+        }
+
+    private processItems = (contextObject: mendix.lib.MxObject[]) => {
+        const checkboxItems = contextObject.map(mxObj => {
+            let isChecked = false;
+            const caption = mxObj.get(this.props.displayAttr);
+            const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
+            if (referencedObjects !== null && referencedObjects.length > 0) {
+                referencedObjects.map(value => {
+                    if (mxObj.getGuid() === value) {
+                        isChecked = true;
+                    }
+                });
+            }
+
+            return {
+                caption,
+                isChecked
+            };
+        });
+        this.setState({ checkboxItems });
+        // tslint:disable-next-line:no-console
+        console.log(this.state.checkboxItems);
     }
 
     public static parseStyle(style = ""): {[key: string]: string} {
