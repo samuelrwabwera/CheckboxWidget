@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <widget id="com.mendix.widget.custom.checkboxreferencesetselector.CheckBoxReferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Checkbox referenceSet Selector</name>
-    <description>Our checkBoxreferenceSetSelector widget</description>
+    <description/>
     <icon/>
     <properties>
-    <property key="dataSource" type="enumeration" defaultValue="xpath">
+        <property key="dataSource" type="enumeration" defaultValue="xpath">
 			<caption>Data source type</caption>
 			<category>Data source</category>
-			<description>The method for retrieving the objects.</description>
+			<description>The method for retrieving the objects</description>
 			<enumerationValues>
-				<enumerationValue key="xpath">XPath</enumerationValue>
+				<enumerationValue key="xpath">Database</enumerationValue>
 				<enumerationValue key="microflow">Microflow</enumerationValue>
 			</enumerationValues>
         </property>
         <property key="entity" type="entity" isPath="yes" pathType="referenceSet" allowNonPersistableEntities="true">
-            <caption>Association</caption>
+            <caption>Entity</caption>
             <category>Data source</category>
             <description>The referenceSet entity</description>
         </property>
 		<property key="constraint" type="entityConstraint" required="false" entityProperty="entity">
 			<caption>XPath constraint</caption>
-			<category>Data source (XPath)</category>
+			<category>Data source</category>
 			<description>Optional constraint to filter the available options</description>
 		</property>
          <property key="callMicroflow" type="microflow" required="false">
@@ -55,7 +55,7 @@
                     <attributeType name="Float" />
                 </attributeTypes>
         </property>
-        <property key="sortOrder" type="enumeration" defaultValue="desc">
+        <!-- <property key="sortOrder" type="enumeration" defaultValue="desc">
 			<caption>Sort order(XPath)</caption>
 			<category>Data source</category>
 			<description>The sort order</description>
@@ -63,7 +63,19 @@
 				<enumerationValue key="asc">Ascending</enumerationValue>
 				<enumerationValue key="desc">Descending</enumerationValue>
 			</enumerationValues>
-        </property>
+        </property> -->
+        <property key="CheckBoxType" type="enumeration" defaultValue="primary">
+    <caption>CheckBox Type</caption>
+    <category>Appearance</category>
+    <description>The type of CheckBox Reference Set Selector</description>
+    <enumerationValues>
+        <enumerationValue key="success">success</enumerationValue>
+        <enumerationValue key="primary">primary</enumerationValue>
+        <enumerationValue key="danger">danger</enumerationValue>
+        <enumerationValue key="default">default</enumerationValue>
+        <enumerationValue key="info">info</enumerationValue>
+    </enumerationValues>
+    </property>
         <property key="formOrientation" type="enumeration" defaultValue="horizontal">
 			<caption>Form orientation</caption>
 			<category>Display</category>
