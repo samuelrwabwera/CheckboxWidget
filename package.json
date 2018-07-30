@@ -2,7 +2,7 @@
   "name": "checkboxreferencesetselector",
   "widgetName": "CheckBoxReferenceSetSelector",
   "version": "0.0.1",
-  "description": "Select Checkbox Reference Set Selector",
+  "description": "Our checkBoxreferenceSetSelector widget",
   "copyright": "Mendix BV",
   "scripts": {
     "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec \"grunt",
@@ -70,6 +70,8 @@
     "webworkify-webpack": "^2.1.3"
   },
   "dependencies": {
-    "classnames": "^2.2.6"
+    "bootstrap": "^4.1.3",
+    "classnames": "^2.2.6",
+    "react-bootstrap": "^0.32.1"
   }
 }

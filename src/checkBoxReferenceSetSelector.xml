@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="com/mendix/widget/custom/checkboxreferencesetselector/CheckBoxReferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
+<widget id="com.mendix.widget.custom.checkboxreferencesetselector.CheckBoxReferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Checkbox referenceSet Selector</name>
     <description>Our checkBoxreferenceSetSelector widget</description>
     <icon/>
     <properties>
-        <property key="captionName" type="string">
-            <caption>checkBoxreferenceSetSelector</caption>
-            <category>behaviour</category>
-            <description/>
-        </property>
-        <property key="dataSourceType" type="enumeration" defaultValue="xpath">
+    <property key="dataSource" type="enumeration" defaultValue="xpath">
 			<caption>Data source type</caption>
 			<category>Data source</category>
 			<description>The method for retrieving the objects.</description>
 			<enumerationValues>
 				<enumerationValue key="xpath">XPath</enumerationValue>
-				<enumerationValue key="mf">Microflow</enumerationValue>
+				<enumerationValue key="microflow">Microflow</enumerationValue>
 			</enumerationValues>
         </property>
-        <property key="referenceSet1" type="entity" isPath="yes" pathType="referenceSet" allowNonPersistableEntities="true">
+        <property key="entity" type="entity" isPath="yes" pathType="referenceSet" allowNonPersistableEntities="true">
             <caption>Association</caption>
             <category>Data source</category>
             <description>The referenceSet entity</description>
         </property>
-		<property key="constraint" type="entityConstraint" required="false" entityProperty="referenceSet1">
+		<property key="constraint" type="entityConstraint" required="false" entityProperty="entity">
 			<caption>XPath constraint</caption>
 			<category>Data source (XPath)</category>
 			<description>Optional constraint to filter the available options</description>
 		</property>
+         <property key="callMicroflow" type="microflow" required="false">
+                <caption>Microflow</caption>
+                <category>Behavior</category>
+                <description>The microflow to execute on click</description>
+                <returnType type="Boolean"></returnType>
+            </property>
         <property key="showLabel" type="boolean" defaultValue="true">
 			<caption>Show Label</caption>
 			<category>Display</category>
@@ -38,7 +39,7 @@
 			<category>Display</category>
 			<description>Specify the caption to use for the field</description>
 		</property>
-        <property key="displayAttr" type="attribute" entityProperty="referenceSet1" isPath="optional" pathType="reference">
+        <property key="displayAttr" type="attribute" entityProperty="entity" isPath="optional" pathType="reference">
             <caption>Attribute</caption>
             <category>Data source</category>
                 <description>The attribute to display.</description>
