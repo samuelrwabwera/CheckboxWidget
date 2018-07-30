@@ -18,20 +18,26 @@ export interface ContainerProps extends WrapperProps {
     fieldCaption: string;
     constraint: string;
     showLabel: string;
+    caption: string;
 }
 
+// tslint:disable-next-line:interface-over-type-literal
+export type CheckboxItems = {
+    caption?: string | number | boolean,
+    isChecked?: boolean
+};
+
 interface ContainerState {
-    checkboxItems: {
-        caption: string | number | boolean;
-        isChecked: boolean;
-    }[];
+    checkboxItems: CheckboxItems[];
 }
+
 export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
     readonly state: ContainerState = {
-        checkboxItems: []
+        checkboxItems: [ { caption: "My caption", isChecked: false } ]
     };
     private entity: string;
     private reference: string;
+    // private checkboxItems: CheckboxItems[];
 
     constructor(props: ContainerProps) {
         super(props);
@@ -47,9 +53,18 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
-            createElement("label", {}),
+            createElement("div", { }, this.props.fieldCaption,
+            this.renderLabels()
+        )
+        );
+    }
 
-            this.state.checkboxItems.map(_item => createElement("input", { type: "checkbox", className: "checkbox", key: "" }))
+    private renderLabels() {
+       return this.state.checkboxItems.map(_items =>
+        createElement("label", {},
+         createElement("input", { type: "checkbox", className: "checkbox", key: "" }),
+         _items.caption
+        )
         );
     }
 
@@ -73,38 +88,39 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             },
             callback: objects => {
                 this.processItems(objects);
-                // tslint:disable-next-line:no-console
-                console.log(objects);
+                // // tslint:disable-next-line:no-console
             }
         });
-        }
+    }
 
     private processItems = (contextObject: mendix.lib.MxObject[]) => {
-        const checkboxItems = contextObject.map(mxObj => {
-            let isChecked = false;
-            const caption = mxObj.get(this.props.displayAttr);
-            const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
-            if (referencedObjects !== null && referencedObjects.length > 0) {
-                referencedObjects.map(value => {
-                    if (mxObj.getGuid() === value) {
-                        isChecked = true;
-                    }
-                });
-            }
-
-            return {
-                caption,
-                isChecked
-            };
-        });
-        this.setState({ checkboxItems });
+        if (contextObject.length > 0) {
+           const checkboxItems = contextObject.map(mxObj => {
+                let isChecked1 = false;
+                const caption1 = mxObj.get("Name");
+                const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
+                if (referencedObjects !== null && referencedObjects.length > 0) {
+                    referencedObjects.map(value => {
+                        if (mxObj.getGuid() === value) {
+                            isChecked1 = true;
+                        }
+                    });
+                }
+                // (this.checkboxItems as any).push({ caption: caption1, isChecked: isChecked1 });
+                return {
+                    caption: caption1,
+                    isChecked: isChecked1
+                };
+            });
+           this.setState({ checkboxItems });
+        }
         // tslint:disable-next-line:no-console
         console.log(this.state.checkboxItems);
     }
 
-    public static parseStyle(style = ""): {[key: string]: string} {
+    public static parseStyle(style = ""): { [key: string]: string } {
         try {
-            return style.split(";").reduce<{[key: string]: string}>((styleObject, line) => {
+            return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
                 const pair = line.split(":");
                 if (pair.length === 2) {
                     const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());

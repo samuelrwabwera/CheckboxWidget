@@ -23,6 +23,12 @@
 			<category>Data source</category>
 			<description>Optional constraint to filter the available options</description>
 		</property>
+         <property key="callMicroflow" type="microflow" required="false">
+                <caption>Microflow</caption>
+                <category>Behavior</category>
+                <description>The microflow to execute on click</description>
+                <returnType type="Boolean"></returnType>
+            </property>
         <property key="showLabel" type="boolean" defaultValue="true">
 			<caption>Show Label</caption>
 			<category>Display</category>
