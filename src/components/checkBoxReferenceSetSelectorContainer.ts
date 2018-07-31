@@ -53,7 +53,11 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
-            createElement("div", { }, this.props.fieldCaption,
+            createElement("div",
+            {
+                className: "checkbox"
+            },
+             this.props.fieldCaption,
             this.renderLabels()
         )
         );
@@ -62,7 +66,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     private renderLabels() {
        return this.state.checkboxItems.map(_items =>
         createElement("label", {},
-         createElement("input", { type: "checkbox", className: "checkbox", key: "" }),
+          createElement("input", { type: "checkbox", className: "checkbox", key: "" }),
          _items.caption
         )
         );
