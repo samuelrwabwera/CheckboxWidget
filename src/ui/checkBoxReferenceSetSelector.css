@@ -1,2 +1,16 @@
-.checkBoxReferenceSetSelector {
-    display: grid; }
+.checkbox {
+    display: grid;
+    text-decoration-line: 70px;
+/* background-color: red; */
+
+	padding-top: 1000;
+
+	margin: 50px;
+
+	/* display: none; */
+	cursor: pointer;
+margin-bottom: 100px;
+
+
+	/* display: none;*/
+}
