@@ -107,28 +107,28 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
 
     private handleChange(event: any) {
         if (this.props.mxObject && event.target.value) {
-            this.mxObj.addReferences(this.reference, event.target.value);
+            this.props.mxObject.addReferences(this.reference, [ event.target.value ]);
         } else {
-            this.mxObj.removeReferences(this.reference, event.target.value);
+            this.props.mxObject.removeReferences(this.reference, [ event.target.value ]);
         }
     }
     private processItems = (contextObject: mendix.lib.MxObject[]) => {
         if (contextObject.length > 0) {
             const checkboxItems = contextObject.map(mxObj => {
-                let isChecked1 = false;
-                const caption1 = mxObj.get("Name");
+                let isChecked = false;
+                const caption = mxObj.get(this.props.displayAttr);
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
                 if (referencedObjects !== null && referencedObjects.length > 0) {
                     referencedObjects.map(value => {
                         if (mxObj.getGuid() === value) {
-                            isChecked1 = true;
+                            isChecked = true;
                         }
                     });
                 }
                 return {
                     guid: mxObj.getGuid(),
-                    caption: caption1,
-                    isChecked: isChecked1
+                    caption,
+                    isChecked
                 };
             });
             this.setState({ checkboxItems });
