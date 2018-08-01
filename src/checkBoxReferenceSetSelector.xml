@@ -55,15 +55,6 @@
                     <attributeType name="Float" />
                 </attributeTypes>
         </property>
-        <!-- <property key="sortOrder" type="enumeration" defaultValue="desc">
-			<caption>Sort order(XPath)</caption>
-			<category>Data source</category>
-			<description>The sort order</description>
-			<enumerationValues>
-				<enumerationValue key="asc">Ascending</enumerationValue>
-				<enumerationValue key="desc">Descending</enumerationValue>
-			</enumerationValues>
-        </property> -->
         <property key="CheckBoxType" type="enumeration" defaultValue="primary">
     <caption>CheckBox Type</caption>
     <category>Appearance</category>

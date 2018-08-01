@@ -24,7 +24,8 @@ export interface ContainerProps extends WrapperProps {
 // tslint:disable-next-line:interface-over-type-literal
 export type CheckboxItems = {
     caption?: string | number | boolean,
-    isChecked?: boolean
+    isChecked?: boolean;
+    guid: string;
 };
 
 interface ContainerState {
@@ -33,16 +34,17 @@ interface ContainerState {
 
 export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
     readonly state: ContainerState = {
-        checkboxItems: [ { caption: "My caption", isChecked: false } ]
+        checkboxItems: []
     };
     private entity: string;
     private reference: string;
+    mxObj: mendix.lib.MxObject;
     // private checkboxItems: CheckboxItems[];
 
     constructor(props: ContainerProps) {
         super(props);
 
-        // this.handleChange = this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.entity = this.props.entity.split("/")[1];
         this.reference = this.props.entity.split("/")[0];
         this.getDataFromXPath = this.getDataFromXPath.bind(this);
@@ -54,21 +56,27 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                 className: "checkBoxReferenceSetSelector"
             },
             createElement("div",
-            {
-                className: "checkbox"
-            },
-             this.props.fieldCaption,
-            this.renderLabels()
-        )
+                {
+                    className: "checkbox"
+                },
+                this.props.fieldCaption,
+                this.renderLabels()
+            )
         );
     }
 
     private renderLabels() {
-       return this.state.checkboxItems.map(_items =>
-        createElement("label", {},
-          createElement("input", { type: "checkbox", className: "checkbox", key: "" }),
-         _items.caption
-        )
+        return this.state.checkboxItems.map(_items =>
+            createElement("label", {},
+                createElement("input",
+                    {
+                        type: "checkbox",
+                        className: "checkbox",
+                        value: _items.guid,
+                        onChange: this.handleChange
+                    }),
+                _items.caption
+            )
         );
     }
 
@@ -97,9 +105,16 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         });
     }
 
+    private handleChange(event: any) {
+        if (this.props.mxObject && event.target.value) {
+            this.mxObj.addReferences(this.reference, event.target.value);
+        } else {
+            this.mxObj.removeReferences(this.reference, event.target.value);
+        }
+    }
     private processItems = (contextObject: mendix.lib.MxObject[]) => {
         if (contextObject.length > 0) {
-           const checkboxItems = contextObject.map(mxObj => {
+            const checkboxItems = contextObject.map(mxObj => {
                 let isChecked1 = false;
                 const caption1 = mxObj.get("Name");
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
@@ -110,13 +125,13 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                         }
                     });
                 }
-                // (this.checkboxItems as any).push({ caption: caption1, isChecked: isChecked1 });
                 return {
+                    guid: mxObj.getGuid(),
                     caption: caption1,
                     isChecked: isChecked1
                 };
             });
-           this.setState({ checkboxItems });
+            this.setState({ checkboxItems });
         }
         // tslint:disable-next-line:no-console
         console.log(this.state.checkboxItems);
