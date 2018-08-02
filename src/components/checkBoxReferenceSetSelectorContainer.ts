@@ -14,7 +14,7 @@ export interface ContainerProps extends WrapperProps {
     checkBoxType: string;
     dataSource: "xpath" | "microflow";
     entity: string;
-    displayAttr: string;
+    displayAttribute: string;
     fieldCaption: string;
     constraint: string;
     showLabel: string;
@@ -39,8 +39,6 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     private entity: string;
     private reference: string;
     mxObj: mendix.lib.MxObject;
-    // private checkboxItems: CheckboxItems[];
-
     constructor(props: ContainerProps) {
         super(props);
 
@@ -55,12 +53,15 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
+            createElement("legend", "Departments",
             createElement("div",
                 {
                     className: "checkbox"
                 },
+
                 this.props.fieldCaption,
                 this.renderLabels()
+            )
             )
         );
     }
@@ -94,29 +95,28 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         mx.data.get({
             xpath: XPath,
             filter: {
-                sort: [ [ this.props.displayAttr, "asc" ] ],
+                sort: [ [ this.props.displayAttribute, "asc" ] ],
                 offset: 0,
                 amount: 50
             },
             callback: objects => {
                 this.processItems(objects);
-                // // tslint:disable-next-line:no-console
             }
         });
     }
 
     private handleChange(event: any) {
-        if (this.props.mxObject && event.target.value) {
+        if (this.props.mxObject && event.target.value === "") {
             this.props.mxObject.addReferences(this.reference, [ event.target.value ]);
         } else {
             this.props.mxObject.removeReferences(this.reference, [ event.target.value ]);
         }
     }
-    private processItems = (contextObject: mendix.lib.MxObject[]) => {
-        if (contextObject.length > 0) {
-            const checkboxItems = contextObject.map(mxObj => {
+    private processItems = (itemObjects: mendix.lib.MxObject[]) => {
+        if (itemObjects.length > 0) {
+            const checkboxItems = itemObjects.map(mxObj => {
                 let isChecked = false;
-                const caption = mxObj.get(this.props.displayAttr);
+                const caption = mxObj.get(this.props.displayAttribute);
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
                 if (referencedObjects !== null && referencedObjects.length > 0) {
                     referencedObjects.map(value => {
@@ -133,8 +133,6 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             });
             this.setState({ checkboxItems });
         }
-        // tslint:disable-next-line:no-console
-        console.log(this.state.checkboxItems);
     }
 
     public static parseStyle(style = ""): { [key: string]: string } {

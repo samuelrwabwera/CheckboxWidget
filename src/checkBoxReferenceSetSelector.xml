@@ -39,7 +39,7 @@
 			<category>Display</category>
 			<description>Specify the caption to use for the field</description>
 		</property>
-        <property key="displayAttr" type="attribute" entityProperty="entity" isPath="optional" pathType="reference">
+        <property key="displayAttribute" type="attribute" entityProperty="entity" isPath="optional" pathType="reference">
             <caption>Attribute</caption>
             <category>Data source</category>
                 <description>The attribute to display.</description>
