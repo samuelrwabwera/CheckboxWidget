@@ -19,22 +19,24 @@ export interface ContainerProps extends WrapperProps {
     constraint: string;
     showLabel: string;
     caption: string;
+    callMicroflow: string;
 }
 
 // tslint:disable-next-line:interface-over-type-literal
 export type CheckboxItems = {
     caption?: string | number | boolean,
-    isChecked?: boolean;
     guid: string;
 };
 
 interface ContainerState {
     checkboxItems: CheckboxItems[];
+    isChecked: boolean;
 }
 
 export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
     readonly state: ContainerState = {
-        checkboxItems: []
+        checkboxItems: [],
+        isChecked: false
     };
     private entity: string;
     private reference: string;
@@ -46,6 +48,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         this.entity = this.props.entity.split("/")[1];
         this.reference = this.props.entity.split("/")[0];
         this.getDataFromXPath = this.getDataFromXPath.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     render() {
@@ -53,15 +56,15 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             {
                 className: "checkBoxReferenceSetSelector"
             },
-            createElement("legend", "Departments",
-            createElement("div",
-                {
-                    className: "checkbox"
-                },
+            createElement("legend", {}, "Departments",
+                createElement("div",
+                    {
+                        className: "checkbox"
+                    },
 
-                this.props.fieldCaption,
-                this.renderLabels()
-            )
+                    this.props.fieldCaption,
+                    this.renderLabels()
+                )
             )
         );
     }
@@ -79,11 +82,14 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                 _items.caption
             )
         );
+
     }
 
-    componentWillReceiveProps(props: ContainerProps) {
-        if (props.mxObject) {
-            this.getDataFromXPath(props.mxObject);
+    componentWillReceiveProps(nextProps: ContainerProps) {
+        if (nextProps.mxObject) {
+            this.getDataFromXPath(nextProps.mxObject);
+        } else {
+            this.setState({ checkboxItems: [] });
         }
     }
 
@@ -106,17 +112,19 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     }
 
     private handleChange(event: any) {
-        if (this.props.mxObject && event.target.value === "") {
+        const newEvent = event.target;
+        if (newEvent && newEvent.checked) {
             this.props.mxObject.addReferences(this.reference, [ event.target.value ]);
         } else {
             this.props.mxObject.removeReferences(this.reference, [ event.target.value ]);
         }
     }
+
     private processItems = (itemObjects: mendix.lib.MxObject[]) => {
         if (itemObjects.length > 0) {
             const checkboxItems = itemObjects.map(mxObj => {
                 let isChecked = false;
-                const caption = mxObj.get(this.props.displayAttribute);
+                const caption = mxObj.get("Name");
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
                 if (referencedObjects !== null && referencedObjects.length > 0) {
                     referencedObjects.map(value => {
@@ -131,10 +139,9 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                     isChecked
                 };
             });
-            this.setState({ checkboxItems });
+            this.setState({ checkboxItems, isChecked: true });
         }
     }
-
     public static parseStyle(style = ""): { [key: string]: string } {
         try {
             return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
