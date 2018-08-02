@@ -1,5 +1,6 @@
 .checkbox {
     display: grid;
+    position: relative;
     text-decoration-line: 70px;
 /* background-color: red; */
 
@@ -9,7 +10,7 @@
 
 	/* display: none; */
 	cursor: pointer;
-margin-bottom: 100px;
+margin-bottom: 200px;
 
 
 	/* display: none;*/
