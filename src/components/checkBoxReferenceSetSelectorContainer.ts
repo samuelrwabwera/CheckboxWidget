@@ -90,7 +90,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     componentWillReceiveProps(newProps: ContainerProps) {
         if (newProps.mxObject) {
             this.resetSubscriptions(newProps.mxObject);
-            this.getDataFromMicroflow(newProps);
+            this.fetchData();
         } else {
             this.setState({ checkboxItems: [] });
         }
@@ -121,30 +121,34 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         this.subscriptionHandles.push(window.mx.data.subscribe({
             guid: mxObject.getGuid(),
             attr: this.props.displayAttr,
-            callback: () => this.getDataFromXPath
+            callback: () => this.fetchData
         }));
         this.subscriptionHandles.push(window.mx.data.subscribe({
                 guid: mxObject.getGuid(),
-                callback: () => this.getDataFromXPath
+                callback: () => this.fetchData
             }));
     }
 
-    private getDataFromMicroflow(props: ContainerProps) {
-        const { mxform, callMicroflow } = props;
-        if (callMicroflow) {
-            mx.data.action({
-                params: {
-                    applyto: "None",
-                    actionname: callMicroflow
-                },
-                origin: mxform,
-                callback: (mxObject: mendix.lib.MxObject[]) => this.processItems(mxObject),
-                error: (error) => {
-                    mx.ui.error(error.message);
-                }
-            });
-
+    private fetchData() {
+        if (this.props.dataSource === "xpath") {
+            this.getDataFromXPath(this.props.mxObject);
+        } else {
+            this.getDataFromMicroflow();
         }
+    }
+
+    private getDataFromMicroflow() {
+        mx.data.action({
+            params: {
+                applyto: "selection",
+                actionname: this.props.callMicroflow
+            },
+            origin: this.props.mxform,
+            callback: (mxObject: mendix.lib.MxObject[]) => this.processItems(mxObject),
+            error: (error) => {
+                mx.ui.error(error.message);
+            }
+        });
     }
 
     private handleChange(event: any) {
