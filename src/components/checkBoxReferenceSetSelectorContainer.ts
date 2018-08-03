@@ -34,6 +34,8 @@ interface ContainerState {
 }
 
 export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
+    private subscriptionHandles: number[] = [];
+
     readonly state: ContainerState = {
         checkboxItems: [],
         isChecked: false
@@ -44,11 +46,11 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     constructor(props: ContainerProps) {
         super(props);
 
-        this.handleChange = this.handleChange.bind(this);
         this.entity = this.props.entity.split("/")[1];
         this.reference = this.props.entity.split("/")[0];
         this.getDataFromXPath = this.getDataFromXPath.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.getDataFromMicroflow = this.getDataFromMicroflow.bind(this);
     }
 
     render() {
@@ -65,6 +67,13 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                     this.props.fieldCaption,
                     this.renderLabels()
                 )
+            ),
+            createElement("div",
+                {
+                    className: "checkbox"
+                },
+                this.props.fieldCaption,
+                this.renderLabels()
             )
         );
     }
@@ -87,19 +96,22 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
 
     componentWillReceiveProps(nextProps: ContainerProps) {
         if (nextProps.mxObject) {
-            this.getDataFromXPath(nextProps.mxObject);
-        } else {
-            this.setState({ checkboxItems: [] });
+            this.getDataFromXPath(nextProps.mxObject); {
+                if (nextProps.mxObject) {
+                    this.resetSubscriptions(nextProps.mxObject);
+                } else {
+                    this.setState({ checkboxItems: [] });
+                }
+            }
         }
     }
-
     private getDataFromXPath(mxObject: mendix.lib.MxObject) {
         const constraint = this.props.constraint
             ? this.props.constraint.replace(/\[\%CurrentObject\%\]/gi, mxObject.getGuid())
             : "";
-        const XPath = "//" + this.entity + constraint;
+        const xpath = "//" + this.entity + constraint;
         mx.data.get({
-            xpath: XPath,
+            xpath,
             filter: {
                 sort: [ [ this.props.displayAttribute, "asc" ] ],
                 offset: 0,
@@ -111,20 +123,56 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         });
     }
 
+    private resetSubscriptions(mxObject: mendix.lib.MxObject) {
+        this.subscriptionHandles.forEach(window.mx.data.unsubscribe);
+        this.subscriptionHandles = [];
+
+        this.subscriptionHandles.push(window.mx.data.subscribe({
+            guid: mxObject.getGuid(),
+            attr: this.props.displayAttribute,
+            callback: () => this.getDataFromXPath
+        }));
+        this.subscriptionHandles.push(window.mx.data.subscribe({
+            guid: mxObject.getGuid(),
+            callback: () => this.getDataFromXPath
+        }));
+    }
+
+    private getDataFromMicroflow(props: ContainerProps) {
+        const { mxform, callMicroflow } = props;
+        if (callMicroflow) {
+            mx.data.action({
+                params: {
+                    applyto: "None",
+                    actionname: callMicroflow
+                },
+                origin: mxform,
+                callback: (mxObject: mendix.lib.MxObject[]) => this.processItems(mxObject),
+                error: (error) => {
+                    mx.ui.error(error.message);
+                }
+            });
+
+        }
+    }
+
     private handleChange(event: any) {
         const newEvent = event.target;
         if (newEvent && newEvent.checked) {
-            this.props.mxObject.addReferences(this.reference, [ event.target.value ]);
-        } else {
-            this.props.mxObject.removeReferences(this.reference, [ event.target.value ]);
-        }
+            if (this.props.mxObject && this.state.isChecked) {
+                this.props.mxObject.addReferences(this.reference, [ event.target.value ]);
+            } else {
+                this.props.mxObject.removeReferences(this.reference, [
+                    event.target.value ]);
+            }
     }
+}
 
     private processItems = (itemObjects: mendix.lib.MxObject[]) => {
         if (itemObjects.length > 0) {
             const checkboxItems = itemObjects.map(mxObj => {
                 let isChecked = false;
-                const caption = mxObj.get("Name");
+                const caption = mxObj.get(this.props.displayAttribute);
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
                 if (referencedObjects !== null && referencedObjects.length > 0) {
                     referencedObjects.map(value => {
@@ -140,27 +188,30 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                 };
             });
             this.setState({ checkboxItems, isChecked: true });
-        }
     }
-    public static parseStyle(style = ""): { [key: string]: string } {
-        try {
-            return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
-                const pair = line.split(":");
-                if (pair.length === 2) {
-                    const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
-                    styleObject[name] = pair[1].trim();
-                }
-                return styleObject;
-            }, {});
-        } catch (error) {
-            CheckBoxReferenceSetSelectorContainer.logError("Failed to parse style", style, error);
-        }
-
-        return {};
-    }
-
-    public static logError(message: string, style?: string, error?: any) {
         // tslint:disable-next-line:no-console
-        window.logger ? window.logger.error(message) : console.log(message, style, error);
+        console.log(this.state.checkboxItems);
+}
+    public static parseStyle(style = ""): { [key: string]: string } {
+    try {
+        return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
+            const pair = line.split(":");
+            if (pair.length === 2) {
+                const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
+                styleObject[name] = pair[1].trim();
+            }
+            return styleObject;
+        }, {});
+    } catch (error) {
+        CheckBoxReferenceSetSelectorContainer.logError("Failed to parse style", style, error);
     }
+
+    return {};
+}
+
+    // tslint:disable-next-line:align
+    public static logError(message: string, style ?: string, error ?: any) {
+    // tslint:disable-next-line:no-console
+    window.logger ? window.logger.error(message) : console.log(message, style, error);
+  }
 }
