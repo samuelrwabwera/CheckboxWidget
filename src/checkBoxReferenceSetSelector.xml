@@ -40,12 +40,32 @@
 			<category>Display</category>
 			<description>Show a label for the field.</description>
 		</property>
+        <property key="direction" type="enumeration" defaultValue="vertical">
+			<caption>Direction</caption>
+			<category>Display</category>
+			<description>This field determines the display direction.</description>
+			<enumerationValues>
+				<enumerationValue key="horizontal">Horizontal</enumerationValue>
+				<enumerationValue key="vertical">Vertical</enumerationValue>
+			</enumerationValues>
+
+		</property>
+        <property key="readonly" type="boolean" defaultValue="false">
+			<caption>Read only</caption>
+			<category>Display</category>
+			<description>The checkboxes are read only if selected</description>
+		</property>
+        <property key="labelWidth" type="integer" defaultValue="4">
+			<caption>Label Width (weight)</caption>
+			<category>Display</category>
+			<description>The column size of the label control (only applied with horizontal orientation)</description>
+		</property>
 		<property key="fieldCaption" type="translatableString" required="false" multiline="false">
 			<caption>Label Caption</caption>
 			<category>Display</category>
 			<description>Specify the caption to use for the field</description>
 		</property>
-        <property key="displayAttribute" type="attribute" entityProperty="entity" isPath="optional" pathType="reference">
+        <property key="displayAttribute" type="attribute" entityProperty="entity">
             <caption>Attribute</caption>
             <category>Data source</category>
                 <description>The attribute to display.</description>
