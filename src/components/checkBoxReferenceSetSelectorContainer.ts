@@ -20,6 +20,7 @@ export interface ContainerProps extends WrapperProps {
     constraint: string;
     showLabel: string;
     caption: string;
+    attr: string;
     callMicroflow: string;
     direction: "Horizontal" | "Vertical";
     labelWidth: string;
@@ -93,11 +94,24 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
     private resetSubscriptions(mxObject: mendix.lib.MxObject) {
         this.subscriptionHandles.forEach(window.mx.data.unsubscribe);
         this.subscriptionHandles = [];
+        if (mxObject) {
+            this.subscriptionHandles.push(window.mx.data.subscribe({
+                guid: mxObject.getGuid(),
+                callback: () => this.fetchData()
+            }));
 
-        this.subscriptionHandles.push(window.mx.data.subscribe({
-            guid: mxObject.getGuid(),
-            callback: () => this.fetchData
-        }));
+            this.subscriptionHandles.push(window.mx.data.subscribe({
+                guid: mxObject.getGuid(),
+                attr: this.reference,
+                callback: () => this.fetchData()
+            }));
+
+            this.subscriptionHandles.push(window.mx.data.subscribe({
+                guid: mxObject.getGuid(),
+                val: true,
+                callback: () => this.fetchData()
+            }));
+        }
     }
 
     private fetchData() {
@@ -150,30 +164,30 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                 };
             });
             this.setState({ checkboxItems });
-    }
+        }
         // tslint:disable-next-line:no-console
         console.log(this.state.checkboxItems);
-}
+    }
     public static parseStyle(style = ""): { [key: string]: string } {
-    try {
-        return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
-            const pair = line.split(":");
-            if (pair.length === 2) {
-                const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
-                styleObject[name] = pair[1].trim();
-            }
-            return styleObject;
-        }, {});
-    } catch (error) {
-        CheckBoxReferenceSetSelectorContainer.logError("Failed to parse style", style, error);
+        try {
+            return style.split(";").reduce<{ [key: string]: string }>((styleObject, line) => {
+                const pair = line.split(":");
+                if (pair.length === 2) {
+                    const name = pair[0].trim().replace(/(-.)/g, match => match[1].toUpperCase());
+                    styleObject[name] = pair[1].trim();
+                }
+                return styleObject;
+            }, {});
+        } catch (error) {
+            CheckBoxReferenceSetSelectorContainer.logError("Failed to parse style", style, error);
+        }
+
+        return {};
     }
 
-    return {};
-}
-
     // tslint:disable-next-line:align
-    public static logError(message: string, style ?: string, error ?: any) {
-    // tslint:disable-next-line:no-console
-    window.logger ? window.logger.error(message) : console.log(message, style, error);
-  }
+    public static logError(message: string, style?: string, error?: any) {
+        // tslint:disable-next-line:no-console
+        window.logger ? window.logger.error(message) : console.log(message, style, error);
+    }
 }

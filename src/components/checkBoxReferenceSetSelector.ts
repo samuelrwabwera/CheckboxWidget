@@ -68,7 +68,7 @@ export default class CheckBoxReferenceSetSelector extends Component<CheckboxRefe
         const guid = event.target.value;
         const checked = event.target.checked;
 
-        if (guid && checked && this.props.handleChange) {
+        if (guid && this.props.handleChange) {
             this.props.handleChange(checked, guid);
         }
     }
