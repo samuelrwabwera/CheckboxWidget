@@ -20,12 +20,14 @@ export interface ContainerProps extends WrapperProps {
     showLabel: string;
     caption: string;
     callMicroflow: string;
+    formOrientation: "horizontal" | "vertical";
 }
 
 // tslint:disable-next-line:interface-over-type-literal
 export type CheckboxItems = {
     caption?: string | number | boolean,
     guid: string;
+    isChecked: boolean
 };
 
 interface ContainerState {
@@ -67,13 +69,6 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                     this.props.fieldCaption,
                     this.renderLabels()
                 )
-            ),
-            createElement("div",
-                {
-                    className: "checkbox"
-                },
-                this.props.fieldCaption,
-                this.renderLabels()
             )
         );
     }
@@ -87,6 +82,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                         className: "checkbox",
                         value: _items.guid,
                         onChange: this.handleChange
+                        // checked: _items.isChecked
                     }),
                 _items.caption
             )
@@ -96,13 +92,10 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
 
     componentWillReceiveProps(nextProps: ContainerProps) {
         if (nextProps.mxObject) {
-            this.getDataFromXPath(nextProps.mxObject); {
-                if (nextProps.mxObject) {
-                    this.resetSubscriptions(nextProps.mxObject);
-                } else {
-                    this.setState({ checkboxItems: [] });
-                }
-            }
+            this.resetSubscriptions(nextProps.mxObject);
+            this.fetchData();
+               } else {
+            this.setState({ checkboxItems: [] });
         }
     }
     private getDataFromXPath(mxObject: mendix.lib.MxObject) {
@@ -130,30 +123,34 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         this.subscriptionHandles.push(window.mx.data.subscribe({
             guid: mxObject.getGuid(),
             attr: this.props.displayAttribute,
-            callback: () => this.getDataFromXPath
+            callback: () => this.fetchData
         }));
         this.subscriptionHandles.push(window.mx.data.subscribe({
-            guid: mxObject.getGuid(),
-            callback: () => this.getDataFromXPath
-        }));
+                guid: mxObject.getGuid(),
+                callback: () => this.fetchData
+            }));
     }
 
-    private getDataFromMicroflow(props: ContainerProps) {
-        const { mxform, callMicroflow } = props;
-        if (callMicroflow) {
-            mx.data.action({
-                params: {
-                    applyto: "None",
-                    actionname: callMicroflow
-                },
-                origin: mxform,
-                callback: (mxObject: mendix.lib.MxObject[]) => this.processItems(mxObject),
-                error: (error) => {
-                    mx.ui.error(error.message);
-                }
-            });
-
+    private fetchData() {
+        if (this.props.dataSource === "xpath") {
+            this.getDataFromXPath(this.props.mxObject);
+        } else {
+            this.getDataFromMicroflow();
         }
+    }
+
+    private getDataFromMicroflow() {
+        mx.data.action({
+            params: {
+                applyto: "selection",
+                actionname: this.props.callMicroflow
+            },
+            origin: this.props.mxform,
+            callback: (mxObject: mendix.lib.MxObject[]) => this.processItems(mxObject),
+            error: (error) => {
+                mx.ui.error(error.message);
+            }
+        });
     }
 
     private handleChange(event: any) {
@@ -172,7 +169,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         if (itemObjects.length > 0) {
             const checkboxItems = itemObjects.map(mxObj => {
                 let isChecked = false;
-                const caption = mxObj.get(this.props.displayAttribute);
+                const caption = mxObj.get("Name");
                 const referencedObjects = this.props.mxObject.getReferences(this.reference) as string[];
                 if (referencedObjects !== null && referencedObjects.length > 0) {
                     referencedObjects.map(value => {
