@@ -93,13 +93,14 @@
         <enumerationValue key="info">info</enumerationValue>
     </enumerationValues>
     </property>
-        <property key="formOrientation" type="enumeration" defaultValue="horizontal">
+        <property key="formOrientation" type="enumeration" defaultValue="Horizontal">
 			<caption>Form orientation</caption>
 			<category>Display</category>
 			<description>The orientation of the label and checkbox items</description>
 			<enumerationValues>
-				<enumerationValue key="horizontal">Horizontal</enumerationValue>
-				<enumerationValue key="vertical">Vertical</enumerationValue>
+				<enumerationValue key="Horizontal">Horizontal</enumerationValue>
+				<enumerationValue key="Vertical">Vertical</enumerationValue>
+                <enumerationValue key="LabelHorizontal">LabelHorizontal</enumerationValue>
 			</enumerationValues>
 		</property>
     </properties>

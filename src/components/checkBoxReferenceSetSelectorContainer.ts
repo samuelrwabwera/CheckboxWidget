@@ -37,12 +37,14 @@ export type CheckboxItems = {
 
 interface ContainerState {
     checkboxItems: CheckboxItems[];
+    fieldCaption: string;
 }
 
 export default class CheckBoxReferenceSetSelectorContainer extends Component<ContainerProps, ContainerState> {
     private subscriptionHandles: number[] = [];
     readonly state: ContainerState = {
-        checkboxItems: []
+        checkboxItems: [],
+        fieldCaption: ""
     };
     private entity: string;
     private reference: string;
@@ -61,7 +63,8 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         return createElement(CheckBoxReferenceSetSelector, {
             checkboxItems: this.state.checkboxItems,
             handleChange: this.handleChange,
-            fieldCaption: this.props.fieldCaption
+            fieldCaption: this.state.fieldCaption,
+            formOrientation: this.props.formOrientation
         });
     }
 
@@ -70,7 +73,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             this.resetSubscriptions(newProps.mxObject);
             this.fetchData();
         } else {
-            this.setState({ checkboxItems: [] });
+            this.setState({ checkboxItems: [], fieldCaption: "" });
         }
     }
 
@@ -186,7 +189,7 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                     isChecked
                 };
             });
-            this.setState({ checkboxItems });
+            this.setState({ checkboxItems, fieldCaption: this.props.fieldCaption });
         }
     }
     public static parseStyle(style = ""): { [key: string]: string } {
