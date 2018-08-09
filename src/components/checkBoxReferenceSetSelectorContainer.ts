@@ -21,8 +21,9 @@ export interface ContainerProps extends WrapperProps {
     showLabel: string;
     caption: string;
     attr: string;
+    microflow: string;
     callMicroflow: string;
-    direction: "Horizontal" | "Vertical";
+    formOrientation: "Horizontal" | "Vertical";
     labelWidth: string;
     readonly: "True" | "False";
 }
@@ -52,6 +53,8 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
         this.reference = this.props.entity.split("/")[0];
         this.getDataFromXPath = this.getDataFromXPath.bind(this);
         this.getDataFromMicroflow = this.getDataFromMicroflow.bind(this);
+        this.executeMicroflow = this.executeMicroflow.bind(this);
+
     }
 
     render() {
@@ -134,13 +137,33 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
                 mx.ui.error(error.message);
             }
         });
-    }
 
+}
     private handleChange = (checked: boolean, guid: string) => {
+        const { microflow } = this.props;
         if (this.props.mxObject && checked) {
             this.props.mxObject.addReferences(this.reference, [ guid ]);
         } else {
             this.props.mxObject.removeReferences(this.reference, [ guid ]);
+        }
+        this.executeMicroflow(microflow);
+    }
+
+    private executeMicroflow(microflow: string) {
+        if (this.props.mxObject && microflow) {
+            mx.data.action({
+                params: {
+                    applyto: "selection",
+                    actionname: microflow,
+                    guids: [ this.props.mxObject.getGuid() ]
+                },
+                origin: this.props.mxform,
+                // tslint:disable-next-line:only-arrow-functions
+                callback: () => undefined,
+                error: (error) => {
+                    mx.ui.error(error.message);
+                }
+            });
         }
     }
 
@@ -165,8 +188,6 @@ export default class CheckBoxReferenceSetSelectorContainer extends Component<Con
             });
             this.setState({ checkboxItems });
         }
-        // tslint:disable-next-line:no-console
-        console.log(this.state.checkboxItems);
     }
     public static parseStyle(style = ""): { [key: string]: string } {
         try {

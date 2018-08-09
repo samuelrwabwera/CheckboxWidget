@@ -29,11 +29,11 @@
             <description></description>
                 <returnType type="Object" isList="true" entityProperty="entity" />
         </property>
-        <property key="callMicroflow" type="microflow" required="false">
+        <property key="microflow" type="microflow" required="false">
              <caption>Microflow</caption>
              <category>Behavior</category>
              <description>The microflow to execute on click</description>
-                <returnType type="Boolean"></returnType>
+                <returnType type="Void"></returnType>
         </property>
         <property key="showLabel" type="boolean" defaultValue="true">
 			<caption>Show Label</caption>
