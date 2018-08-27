@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="com.mendix.widget.custom.checkboxreferencesetselector.CheckBoxReferenceSetSelector" needsEntityContext="true" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Checkbox referenceSet Selector</name>
+    <description/>
+    <icon/>
+    <properties>
+        <property key="dataSource" type="enumeration" defaultValue="xpath">
+			<caption>Data source type</caption>
+			<category>Data source</category>
+			<description>The method for retrieving the objects</description>
+			<enumerationValues>
+				<enumerationValue key="xpath">Database</enumerationValue>
+				<enumerationValue key="microflow">Microflow</enumerationValue>
+			</enumerationValues>
+        </property>
+        <property key="entity" type="entity" isPath="yes" pathType="referenceSet" allowNonPersistableEntities="true">
+            <caption>Entity</caption>
+            <category>Data source</category>
+            <description>The referenceSet entity</description>
+        </property>
+		<property key="constraint" type="entityConstraint" required="false" entityProperty="entity">
+			<caption>XPath constraint</caption>
+			<category>Data source</category>
+			<description>Optional constraint to filter the available options</description>
+		</property>
+        <property key="dataSourceMicroflow" type="microflow" required="false">
+            <caption>Datasource microflow</caption>
+            <category>Data source</category>
+            <description></description>
+                <returnType type="Object" isList="true" entityProperty="entity" />
+        </property>
+        <property key="microflow" type="microflow" required="false">
+             <caption>Microflow</caption>
+             <category>Behavior</category>
+             <description>The microflow to execute on click</description>
+                <returnType type="Void"></returnType>
+        </property>
+        <property key="showLabel" type="boolean" defaultValue="true">
+			<caption>Show Label</caption>
+			<category>Display</category>
+			<description>Show a label for the field.</description>
+		</property>
+        <property key="direction" type="enumeration" defaultValue="vertical">
+			<caption>Direction</caption>
+			<category>Display</category>
+			<description>This field determines the display direction.</description>
+			<enumerationValues>
+				<enumerationValue key="horizontal">Horizontal</enumerationValue>
+				<enumerationValue key="vertical">Vertical</enumerationValue>
+			</enumerationValues>
+
+		</property>
+        <property key="readonly" type="boolean" defaultValue="false">
+			<caption>Read only</caption>
+			<category>Display</category>
+			<description>The checkboxes are read only if selected</description>
+		</property>
+        <property key="labelWidth" type="integer" defaultValue="4">
+			<caption>Label Width (weight)</caption>
+			<category>Display</category>
+			<description>The column size of the label control (only applied with horizontal orientation)</description>
+		</property>
+		<property key="fieldCaption" type="translatableString" required="false" multiline="false">
+			<caption>Label Caption</caption>
+			<category>Display</category>
+			<description>Specify the caption to use for the field</description>
+		</property>
+        <property key="displayAttribute" type="attribute" entityProperty="entity">
+            <caption>Attribute</caption>
+            <category>Data source</category>
+                <description>The attribute to display.</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                    <attributeType name="Integer" />
+                    <attributeType name="Boolean" />
+                    <attributeType name="Enum" />
+                    <attributeType name="Long" />
+                    <attributeType name="DateTime" />
+                    <attributeType name="AutoNumber" />
+                    <attributeType name="Currency" />
+                    <attributeType name="Float" />
+                </attributeTypes>
+        </property>
+        <property key="CheckBoxType" type="enumeration" defaultValue="primary">
+        <caption>CheckBox Type</caption>
+        <category>Appearance</category>
+        <description>The type of CheckBox Reference Set Selector</description>
+    <enumerationValues>
+        <enumerationValue key="success">success</enumerationValue>
+        <enumerationValue key="primary">primary</enumerationValue>
+        <enumerationValue key="danger">danger</enumerationValue>
+        <enumerationValue key="default">default</enumerationValue>
+        <enumerationValue key="info">info</enumerationValue>
+    </enumerationValues>
+    </property>
+        <property key="formOrientation" type="enumeration" defaultValue="Horizontal">
+			<caption>Form orientation</caption>
+			<category>Display</category>
+			<description>The orientation of the label and checkbox items</description>
+			<enumerationValues>
+				<enumerationValue key="Horizontal">Horizontal</enumerationValue>
+				<enumerationValue key="Vertical">Vertical</enumerationValue>
+                <enumerationValue key="LabelHorizontal">LabelHorizontal</enumerationValue>
+			</enumerationValues>
+		</property>
+    </properties>
+
+</widget>
